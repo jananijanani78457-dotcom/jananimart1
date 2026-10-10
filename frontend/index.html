@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JananiMart | Happy Shopping</title>
+
+<style>
+:root {
+    --orange:#FF4B20;
+    --teal:#0F4351;
+    --cream:#FFF8F0;
+    --yellow:#FFD166;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Segoe UI",Arial,sans-serif; background:var(--cream); color:var(--teal); }
+button,input,textarea,select { font:inherit; }
+button { cursor:pointer; }
+header {
+    background:white; padding:16px 5%; display:flex; align-items:center;
+    justify-content:space-between; gap:15px; flex-wrap:wrap; position:sticky;
+    top:0; z-index:10; box-shadow:0 3px 15px #0F435110;
+}
+.logo { font-size:23px; font-weight:900; }
+.logo span { background:var(--orange); color:white; padding:7px 10px; border-radius:10px; margin-right:5px; }
+.search { background:#F3F5F3; border:1px solid #E2E8E5; padding:12px; border-radius:12px; width:32%; }
+.search input { width:90%; border:0; outline:none; background:transparent; }
+.header-actions { display:flex; gap:9px; align-items:center; }
+.cart-button,.orders-button,.primary,.secondary {
+    border:0; border-radius:10px; padding:12px 15px; font-weight:bold;
+}
+.cart-button { background:var(--teal); color:white; }
+.cart-button b { background:var(--yellow); color:var(--teal); padding:3px 7px; border-radius:50%; }
+.orders-button,.secondary { background:#E8EFED; color:var(--teal); }
+.primary { background:var(--orange); color:white; }
+button:hover { filter:brightness(.96); }
+main { width:90%; max-width:1200px; margin:auto; }
+.hero {
+    margin:30px 0; padding:45px 6%; background:var(--teal); color:white;
+    border-radius:25px; display:flex; justify-content:space-between;
+    align-items:center; gap:20px;
+}
+.hero small { color:var(--yellow); font-weight:bold; letter-spacing:2px; }
+.hero h1 { font-size:clamp(38px,5vw,60px); margin:15px 0; }
+.hero h1 span { color:var(--yellow); }
+.hero p { line-height:1.7; color:#E0EBEC; margin-bottom:22px; }
+.hero-art { font-size:120px; }
+.section { margin:35px 0 45px; }
+.section h2 { margin-bottom:20px; font-size:29px; }
+.categories { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:25px; }
+.category { background:white; border:1px solid #E4E6E0; border-radius:12px; padding:12px 17px; color:var(--teal); font-weight:bold; }
+.category.active,.category:hover { background:var(--orange); color:white; border-color:var(--orange); }
+.products { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; }
+.product { background:white; border-radius:17px; border:1px solid #EEE8DF; overflow:hidden; }
+.product:hover { transform:translateY(-3px); }
+.product-image { height:160px; display:grid; place-items:center; font-size:65px; position:relative; }
+.orange { background:#FFE2D6; }
+.yellow { background:#FFF0C7; }
+.blue { background:#DCEEF4; }
+.pink { background:#F8DFE8; }
+.green { background:#E0F0DE; }
+.heart { position:absolute; right:10px; top:10px; background:white; border:0; border-radius:50%; width:35px; height:35px; color:var(--orange); font-size:21px; }
+.product-info { padding:14px; }
+.product-info small { color:#718187; }
+.product-info h3 { font-size:16px; margin:8px 0; }
+.rating { color:#C58A12; font-size:13px; margin-bottom:13px; }
+.product-bottom { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.price { font-size:18px; font-weight:900; }
+.add { background:var(--orange); color:white; border:0; border-radius:9px; padding:10px; font-weight:bold; }
+.empty { padding:25px; text-align:center; color:#718187; }
+.seller { background:#FFE3D8; border-radius:20px; padding:30px; margin:40px 0; line-height:1.7; }
+footer { background:white; text-align:center; padding:28px; color:#718187; }
+footer p { margin-top:10px; }
+
+#ordersScreen { display:none; width:90%; max-width:1200px; min-height:65vh; margin:35px auto 55px; }
+body.orders-view #ordersScreen { display:block; }
+body.orders-view main,body.orders-view footer { display:none; }
+.orders-top { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:25px; }
+.orders-top h1 { font-size:clamp(28px,4vw,38px); }
+.orders-top p { color:#718187; margin-top:8px; }
+.order-filters { display:flex; flex-wrap:wrap; gap:9px; margin-bottom:22px; }
+.order-filter { background:white; color:var(--teal); border:1px solid #DCE4E0; border-radius:10px; padding:10px 15px; font-weight:bold; }
+.order-filter.active { background:var(--orange); border-color:var(--orange); color:white; }
+.order-card { background:white; border:1px solid #E7EAE6; border-radius:17px; padding:20px; margin-bottom:16px; }
+.order-card-head { display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; border-bottom:1px solid #E8ECE9; padding-bottom:14px; margin-bottom:14px; }
+.order-id { font-weight:900; }
+.order-date { color:#718187; font-size:13px; margin-top:5px; }
+.order-status { display:inline-block; border-radius:30px; padding:7px 12px; background:#FFF0C7; color:#805900; font-size:12px; font-weight:800; height:fit-content; }
+.order-item { display:flex; align-items:center; gap:12px; padding:8px 0; }
+.order-item-icon { width:48px; height:48px; border-radius:11px; display:grid; place-items:center; font-size:26px; flex-shrink:0; }
+.order-item-info { flex:1; }
+.order-item-info small { display:block; color:#718187; margin-top:4px; }
+.order-summary { border-top:1px solid #E8ECE9; margin-top:12px; padding-top:15px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.order-total { font-size:19px; font-weight:900; }
+.order-details { color:#718187; font-size:13px; margin-top:6px; line-height:1.6; }
+.orders-empty { text-align:center; background:white; border-radius:18px; padding:55px 20px; }
+.orders-empty .empty-icon { font-size:58px; margin-bottom:14px; }
+.orders-empty p { color:#718187; margin:10px 0 20px; line-height:1.6; }
+
+.overlay { display:none; position:fixed; inset:0; z-index:100; background:#0F4351B8; padding:15px; overflow-y:auto; }
+.overlay.open { display:flex; justify-content:center; align-items:center; }
+.panel { width:100%; max-width:680px; max-height:95vh; overflow-y:auto; background:white; border-radius:20px; padding:24px; }
+.panel-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+.panel-heading h2 { font-size:24px; }
+.close { border:0; background:#F0F3F1; border-radius:9px; width:38px; height:38px; font-size:25px; }
+.cart-row { display:grid; grid-template-columns:55px 1fr auto; align-items:center; gap:13px; padding:15px 0; border-bottom:1px solid #E8ECE9; }
+.cart-icon { width:55px; height:55px; border-radius:12px; display:grid; place-items:center; font-size:29px; }
+.cart-name { font-weight:bold; }
+.cart-price { color:#718187; font-size:13px; margin-top:4px; }
+.quantity { display:flex; align-items:center; gap:12px; margin-top:8px; }
+.quantity button { width:29px; height:29px; border:1px solid #DCE4E0; border-radius:7px; background:white; color:var(--teal); font-weight:bold; }
+.remove { border:0; background:transparent; color:#C33D2C; font-size:12px; margin-top:7px; }
+.total { display:flex; justify-content:space-between; padding:20px 0; font-size:20px; font-weight:900; }
+.actions { display:flex; gap:10px; flex-wrap:wrap; }
+.empty-cart { text-align:center; padding:30px 5px; }
+.empty-cart div { font-size:48px; margin-bottom:12px; }
+.empty-cart p { color:#718187; margin:10px 0 18px; }
+.checkout { display:none; }
+.checkout.show { display:block; }
+.checkout h3 { margin:15px 0; }
+.form { display:grid; gap:13px; }
+.form label { display:grid; gap:6px; font-weight:bold; font-size:13px; }
+.form input,.form textarea,.form select { width:100%; padding:12px; border:1px solid #DCE4E0; border-radius:9px; outline-color:var(--orange); }
+.form textarea { min-height:80px; resize:vertical; }
+.note { font-size:12px; color:#718187; line-height:1.5; }
+.success { display:none; text-align:center; padding:25px 5px; }
+.success.show { display:block; }
+.success-icon { width:68px; height:68px; margin:0 auto 15px; display:grid; place-items:center; border-radius:50%; background:#E0F0DE; color:#26723A; font-size:35px; }
+.success p { color:#718187; line-height:1.6; margin:12px 0 20px; }
+
+@media(max-width:850px) {
+    .products { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .hero-art { font-size:85px; }
+}
+@media(max-width:550px) {
+    header { padding:13px 4%; }
+    .search { width:100%; order:3; }
+    .header-actions { margin-left:auto; }
+    .orders-button,.cart-button { padding:10px; font-size:12px; }
+    main,#ordersScreen { width:92%; }
+    .hero { padding:28px 22px; }
+    .hero-art { display:none; }
+    .hero h1 { font-size:42px; }
+    .products { gap:12px; }
+    .product-image { height:125px; font-size:52px; }
+    .product-info { padding:10px; }
+    .product-info h3 { font-size:14px; }
+    .price { font-size:16px; }
+    .add { padding:9px; }
+    .panel { padding:16px; }
+    .cart-row { grid-template-columns:45px 1fr; }
+    .cart-icon { width:45px; height:45px; }
+    .line-total { grid-column:2; }
+}
+</style>
+</head>
+
+<body>
+<header>
+    <div class="logo"><span>J</span>JananiMart</div>
+    <div class="search">🔍 <input id="search" type="search" placeholder="Search products..."></div>
+    <div class="header-actions">
+        <button class="orders-button" id="openOrders">📦 My Orders</button>
+        <button class="cart-button" id="openCart">🛒 Cart <b id="cartCount">0</b></button>
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <div>
+            <small>WELCOME TO JANANIMART</small>
+            <h1>Shop Happy.<br><span>Live Better.</span></h1>
+            <p>Discover your everyday favourites at prices you'll love.</p>
+            <a href="#shop" class="primary" style="display:inline-block;text-decoration:none">Explore Products →</a>
+        </div>
+        <div class="hero-art">🛍️</div>
+    </section>
+
+    <section class="section" id="shop">
+        <h2>Shop by Category</h2>
+        <div class="categories" id="categories">
+            <button class="category active" data-category="All">✨ All</button>
+            <button class="category" data-category="Electronics">🎧 Electronics</button>
+            <button class="category" data-category="Fashion">👕 Fashion</button>
+            <button class="category" data-category="Home">🏠 Home</button>
+            <button class="category" data-category="Accessories">⌚ Accessories</button>
+        </div>
+        <h2>Popular Products</h2>
+        <p id="resultCount" style="color:#718187;margin:-10px 0 20px"></p>
+        <div class="products" id="products"></div>
+        <div class="empty" id="noProducts" hidden>No products found. Try another search.</div>
+    </section>
+
+    <section class="seller">
+        <h2>Have a shop of your own? 💼</h2>
+        <p>Grow your business with JananiMart. Connect with more customers and sell your products.</p>
+    </section>
+</main>
+
+<section id="ordersScreen">
+    <div class="orders-top">
+        <div>
+            <h1>My Orders 📦</h1>
+            <p>Track your purchases and check your order details.</p>
+        </div>
+        <button class="primary" id="backToShop">← Continue Shopping</button>
+    </div>
+    <div class="order-filters" id="orderFilters">
+        <button class="order-filter active" data-order-filter="All">All Orders</button>
+        <button class="order-filter" data-order-filter="Processing">Processing</button>
+        <button class="order-filter" data-order-filter="Confirmed">Confirmed</button>
+        <button class="order-filter" data-order-filter="Shipped">Shipped</button>
+        <button class="order-filter" data-order-filter="Delivered">Delivered</button>
+        <button class="order-filter" data-order-filter="Cancelled">Cancelled</button>
+    </div>
+    <div id="ordersList"></div>
+</section>
+
+<footer>
+    <div class="logo"><span>J</span>JananiMart</div>
+    <p>© 2026 JananiMart. Happy shopping!</p>
+</footer>
+
+<div class="overlay" id="cartOverlay">
+    <div class="panel">
+        <div class="panel-heading">
+            <h2 id="panelTitle">Your Cart 🛒</h2>
+            <button class="close" id="closeCart" aria-label="Close">&times;</button>
+        </div>
+        <div id="cartContents"></div>
+
+        <div class="checkout" id="checkout">
+            <h3>Delivery Details</h3>
+            <form class="form" id="checkoutForm">
+                <label>Full Name
+                    <input name="name" required maxlength="80" placeholder="Enter your name">
+                </label>
+                <label>Phone Number
+                    <input name="phone" required type="tel" pattern="[0-9+\-\s]{8,15}" placeholder="Enter your phone number">
+                </label>
+                <label>Delivery Address
+                    <textarea name="address" required maxlength="300" placeholder="Enter your full delivery address"></textarea>
+                </label>
+                <label>Payment Method
+                    <select name="payment" required>
+                        <option value="Cash on delivery">Cash on delivery</option>
+                        <option value="Online payment demo">Online payment (demo only)</option>
+                    </select>
+                </label>
+                <p class="note">Demo only: no payment is collected. Orders are saved in this browser, not the server.</p>
+                <div class="actions">
+                    <button class="primary" type="submit">Place Order</button>
+                    <button class="secondary" type="button" id="backToCart">Back to Cart</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="success" id="success">
+            <div class="success-icon">✓</div>
+            <h2>Order placed successfully!</h2>
+            <p id="successMessage"></p>
+            <button class="primary" id="viewMyOrders">View My Orders</button>
+            <button class="secondary" id="continueShopping">Continue Shopping</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const products = [
+    {id:1,name:"Wireless Headphones",category:"Electronics",price:1299,icon:"🎧",color:"orange",rating:"4.8"},
+    {id:2,name:"Everyday Backpack",category:"Fashion",price:899,icon:"🎒",color:"yellow",rating:"4.6"},
+    {id:3,name:"Smart Watch",category:"Accessories",price:1799,icon:"⌚",color:"blue",rating:"4.7"},
+    {id:4,name:"Coffee Mug Set",category:"Home",price:499,icon:"☕",color:"pink",rating:"4.5"},
+    {id:5,name:"Running Shoes",category:"Fashion",price:1499,icon:"👟",color:"green",rating:"4.7"},
+    {id:6,name:"Bluetooth Speaker",category:"Electronics",price:999,icon:"🔊",color:"blue",rating:"4.6"},
+    {id:7,name:"Sunglasses",category:"Accessories",price:399,icon:"🕶️",color:"yellow",rating:"4.4"},
+    {id:8,name:"Table Lamp",category:"Home",price:699,icon:"💡",color:"orange",rating:"4.5"}
+];
+
+let selectedCategory = "All";
+let cart = loadData("jmCart", []);
+let wishlist = new Set(loadData("jmWishlist", []));
+let orders = loadData("jmOrders", []);
+let selectedOrderFilter = "All";
+
+const productsContainer = document.getElementById("products");
+const cartOverlay = document.getElementById("cartOverlay");
+const cartContents = document.getElementById("cartContents");
+const checkout = document.getElementById("checkout");
+const success = document.getElementById("success");
+
+function loadData(key, fallback) {
+    try {
+        const data = JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+        return data ?? fallback;
+    } catch {
+        return fallback;
+    }
+}
+function money(amount) {
+    return "₹" + Number(amount).toLocaleString("en-IN");
+}
+function saveCart() {
+    localStorage.setItem("jmCart", JSON.stringify(cart));
+    updateCartCount();
+}
+function saveOrders() {
+    localStorage.setItem("jmOrders", JSON.stringify(orders));
+}
+function updateCartCount() {
+    document.getElementById("cartCount").textContent =
+        cart.reduce((sum, item) => sum + item.quantity, 0);
+}
+function totalAmount() {
+    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
+
+function renderProducts() {
+    const query = document.getElementById("search").value.trim().toLowerCase();
+    const filtered = products.filter(product =>
+        (selectedCategory === "All" || product.category === selectedCategory) &&
+        (product.name.toLowerCase().includes(query) || product.category.toLowerCase().includes(query))
+    );
+
+    productsContainer.innerHTML = filtered.map(product => `
+        <article class="product">
+            <div class="product-image ${product.color}">
+                <button class="heart" data-wish="${product.id}">${wishlist.has(product.id) ? "♥" : "♡"}</button>
+                ${product.icon}
+            </div>
+            <div class="product-info">
+                <small>${product.category}</small>
+                <h3>${product.name}</h3>
+                <div class="rating">★ ${product.rating} / 5</div>
+                <div class="product-bottom">
+                    <span class="price">${money(product.price)}</span>
+                    <button class="add" data-add="${product.id}">+ Add</button>
+                </div>
+            </div>
+        </article>
+    `).join("");
+
+    document.getElementById("resultCount").textContent = `${filtered.length} products available`;
+    document.getElementById("noProducts").hidden = filtered.length > 0;
+}
+
+function addToCart(id) {
+    const product = products.find(item => item.id === id);
+    if (!product) return;
+    const existing = cart.find(item => item.id === id);
+    if (existing) existing.quantity++;
+    else cart.push({...product, quantity:1});
+    saveCart();
+}
+function changeQuantity(id, change) {
+    const item = cart.find(product => product.id === id);
+    if (!item) return;
+    item.quantity += change;
+    if (item.quantity <= 0) cart = cart.filter(product => product.id !== id);
+    saveCart();
+    renderCart();
+}
+function removeItem(id) {
+    cart = cart.filter(item => item.id !== id);
+    saveCart();
+    renderCart();
+}
+function openCart() {
+    cartOverlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+    checkout.classList.remove("show");
+    success.classList.remove("show");
+    cartContents.hidden = false;
+    document.getElementById("panelTitle").textContent = "Your Cart 🛒";
+    renderCart();
+}
+function closeCart() {
+    cartOverlay.classList.remove("open");
+    document.body.style.overflow = "";
+}
+function renderCart() {
+    checkout.classList.remove("show");
+    success.classList.remove("show");
+    cartContents.hidden = false;
+
+    if (cart.length === 0) {
+        cartContents.innerHTML = `
+            <div class="empty-cart">
+                <div>🛍️</div><h3>Your cart is empty</h3>
+                <p>Add your favourite products to get started.</p>
+                <button class="primary" id="shopNow">Explore Products</button>
+            </div>`;
+        document.getElementById("shopNow").addEventListener("click", () => {
+            closeCart();
+            document.getElementById("shop").scrollIntoView({behavior:"smooth"});
+        });
+        return;
+    }
+
+    cartContents.innerHTML = cart.map(item => `
+        <div class="cart-row">
+            <div class="cart-icon ${item.color}">${item.icon}</div>
+            <div>
+                <div class="cart-name">${item.name}</div>
+                <div class="cart-price">${money(item.price)} each</div>
+                <div class="quantity">
+                    <button data-minus="${item.id}">−</button>
+                    <b>${item.quantity}</b>
+                    <button data-plus="${item.id}">+</button>
+                </div>
+                <button class="remove" data-remove="${item.id}">Remove item</button>
+            </div>
+            <b class="line-total">${money(item.price * item.quantity)}</b>
+        </div>
+    `).join("") + `
+        <div class="total"><span>Total</span><span>${money(totalAmount())}</span></div>
+        <div class="actions">
+            <button class="primary" id="checkoutButton">Proceed to Checkout</button>
+            <button class="secondary" id="keepShopping">Continue Shopping</button>
+        </div>`;
+
+    document.getElementById("checkoutButton").addEventListener("click", () => {
+        cartContents.hidden = true;
+        checkout.classList.add("show");
+        document.getElementById("panelTitle").textContent = "Checkout";
+    });
+    document.getElementById("keepShopping").addEventListener("click", closeCart);
+}
+
+function openOrders() {
+    closeCart();
+    document.body.classList.add("orders-view");
+    selectedOrderFilter = "All";
+    document.querySelectorAll("[data-order-filter]").forEach(button =>
+        button.classList.toggle("active", button.dataset.orderFilter === "All")
+    );
+    renderOrders();
+    window.scrollTo({top:0,behavior:"smooth"});
+}
+function closeOrders() {
+    document.body.classList.remove("orders-view");
+    window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderOrders() {
+    const ordersList = document.getElementById("ordersList");
+    const filtered = selectedOrderFilter === "All"
+        ? orders
+        : orders.filter(order => order.status === selectedOrderFilter);
+
+    if (filtered.length === 0) {
+        ordersList.innerHTML = `
+            <div class="orders-empty">
+                <div class="empty-icon">📦</div>
+                <h2>${orders.length === 0 ? "No orders yet" : "No orders in this category"}</h2>
+                <p>${orders.length === 0
+                    ? "Your placed orders will appear here. Explore products and place your first order!"
+                    : "Try another status to see your orders."}</p>
+                <button class="primary" id="ordersShopNow">Explore Products</button>
+            </div>`;
+        document.getElementById("ordersShopNow").addEventListener("click", closeOrders);
+        return;
+    }
+
+    ordersList.innerHTML = filtered.map(order => `
+        <article class="order-card">
+            <div class="order-card-head">
+                <div>
+                    <div class="order-id">Order #${order.id}</div>
+                    <div class="order-date">Placed on ${order.date}</div>
+                </div>
+                <span class="order-status">${order.status}</span>
+            </div>
+            ${order.items.map(item => `
+                <div class="order-item">
+                    <div class="order-item-icon ${item.color || "orange"}">${item.icon || "🛍️"}</div>
+                    <div class="order-item-info">
+                        <strong>${item.name}</strong>
+                        <small>${money(item.price)} × ${item.quantity}</small>
+                    </div>
+                    <strong>${money(item.price * item.quantity)}</strong>
+                </div>
+            `).join("")}
+            <div class="order-summary">
+                <div>
+                    <div class="order-total">Total: ${money(order.total)}</div>
+                    <div class="order-details">
+                        Payment: ${order.payment}<br>
+                        Deliver to: ${order.address}
+                    </div>
+                </div>
+            </div>
+        </article>
+    `).join("");
+}
+
+productsContainer.addEventListener("click", event => {
+    const addButton = event.target.closest("[data-add]");
+    const wishButton = event.target.closest("[data-wish]");
+
+    if (addButton) {
+        addToCart(Number(addButton.dataset.add));
+        addButton.textContent = "✓ Added";
+        setTimeout(() => {
+            if (addButton.isConnected) addButton.textContent = "+ Add";
+        }, 800);
+    }
+    if (wishButton) {
+        const id = Number(wishButton.dataset.wish);
+        if (wishlist.has(id)) wishlist.delete(id);
+        else wishlist.add(id);
+        localStorage.setItem("jmWishlist", JSON.stringify([...wishlist]));
+        renderProducts();
+    }
+});
+
+document.getElementById("categories").addEventListener("click", event => {
+    const button = event.target.closest("[data-category]");
+    if (!button) return;
+    selectedCategory = button.dataset.category;
+    document.querySelectorAll(".category").forEach(item =>
+        item.classList.toggle("active", item === button)
+    );
+    renderProducts();
+});
+
+document.getElementById("search").addEventListener("input", renderProducts);
+document.getElementById("openCart").addEventListener("click", openCart);
+document.getElementById("openOrders").addEventListener("click", openOrders);
+document.getElementById("backToShop").addEventListener("click", closeOrders);
+document.getElementById("closeCart").addEventListener("click", closeCart);
+
+document.getElementById("orderFilters").addEventListener("click", event => {
+    const button = event.target.closest("[data-order-filter]");
+    if (!button) return;
+    selectedOrderFilter = button.dataset.orderFilter;
+    document.querySelectorAll("[data-order-filter]").forEach(item =>
+        item.classList.toggle("active", item === button)
+    );
+    renderOrders();
+});
+
+cartContents.addEventListener("click", event => {
+    const plus = event.target.closest("[data-plus]");
+    const minus = event.target.closest("[data-minus]");
+    const remove = event.target.closest("[data-remove]");
+    if (plus) changeQuantity(Number(plus.dataset.plus), 1);
+    if (minus) changeQuantity(Number(minus.dataset.minus), -1);
+    if (remove) removeItem(Number(remove.dataset.remove));
+});
+
+document.getElementById("backToCart").addEventListener("click", () => {
+    checkout.classList.remove("show");
+    cartContents.hidden = false;
+    document.getElementById("panelTitle").textContent = "Your Cart 🛒";
+});
+
+cartOverlay.addEventListener("click", event => {
+    if (event.target === cartOverlay) closeCart();
+});
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeCart();
+});
+
+document.getElementById("checkoutForm").addEventListener("submit", event => {
+    event.preventDefault();
+    if (cart.length === 0) return;
+
+    const formData = new FormData(event.currentTarget);
+    const customerName = String(formData.get("name")).trim();
+    const orderNumber = "JM" + Date.now().toString().slice(-8);
+    const orderDate = new Date().toLocaleString("en-IN", {
+        dateStyle:"medium",timeStyle:"short"
+    });
+
+    const newOrder = {
+        id:orderNumber,
+        date:orderDate,
+        customerName,
+        phone:String(formData.get("phone")).trim(),
+        address:String(formData.get("address")).trim(),
+        payment:String(formData.get("payment")),
+        total:totalAmount(),
+        status:"Processing",
+        items:cart.map(item => ({
+            id:item.id,name:item.name,category:item.category,
+            price:item.price,quantity:item.quantity,icon:item.icon,color:item.color
+        }))
+    };
+
+    orders.unshift(newOrder);
+    saveOrders();
+    cart = [];
+    saveCart();
+
+    cartContents.hidden = true;
+    checkout.classList.remove("show");
+    success.classList.add("show");
+    document.getElementById("panelTitle").textContent = "Order Confirmation";
+    document.getElementById("successMessage").textContent =
+        `Thank you, ${customerName}! Your order ${orderNumber} totals ${money(newOrder.total)}. It is saved in this browser. No payment was taken, and it has not been saved to the server.`;
+
+    event.currentTarget.reset();
+});
+
+document.getElementById("viewMyOrders").addEventListener("click", openOrders);
+document.getElementById("continueShopping").addEventListener("click", () => {
+    closeCart();
+    document.getElementById("shop").scrollIntoView({behavior:"smooth"});
+});
+
+updateCartCount();
+renderProducts();
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | JananiMart</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #6c3cff, #ff4f81);
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            padding: 40px 32px;
+            border-radius: 22px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #6c3cff;
+            margin-bottom: 10px;
+        }
+
+        .logo span {
+            color: #ff4f81;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #29213d;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #6c3cff;
+            box-shadow: 0 0 5px rgba(108, 60, 255, 0.2);
+        }
+
+        .forgot {
+            text-align: right;
+            margin-bottom: 22px;
+        }
+
+        .forgot a {
+            color: #6c3cff;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, #6c3cff, #ff4f81);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            opacity: 0.9;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #d93025;
+        }
+
+        .signup {
+            text-align: center;
+            margin-top: 24px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .signup a {
+            color: #6c3cff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        @media (max-width: 400px) {
+            .login-container {
+                padding: 30px 22px;
+            }
+
+            .logo {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="logo">Janani<span>Mart</span></div>
+
+        <p class="subtitle">Your shopping, made simple!</p>
+
+        <h2>Welcome Back!</h2>
+
+        <form id="loginForm">
+
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
+
+            <div class="forgot">
+                <a href="#" id="forgotLink">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="login-btn">
+                Login
+            </button>
+
+            <p class="message" id="message"></p>
+
+        </form>
+
+        <p class="signup">
+            Don't have an account?
+            <a href="signup.html">Sign Up</a>
+        </p>
+
+    </div>
+
+    <script>
+        const form = document.getElementById("loginForm");
+        const message = document.getElementById("message");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            if (!email || !password) {
+                message.style.color = "#d93025";
+                message.textContent = "Please fill in all fields.";
+                return;
+            }
+
+            message.style.color = "#6c3cff";
+            message.textContent =
+                "Login form validated! Backend authentication is not connected yet.";
+        });
+
+        document.getElementById("forgotLink").addEventListener(
+            "click",
+            function(event) {
+                event.preventDefault();
+                message.style.color = "#6c3cff";
+                message.textContent =
+                    "Please contact support to reset your password.";
+            }
+        );
+    </script>
+
+</body>
+</html>
+
