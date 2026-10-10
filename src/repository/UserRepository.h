@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../model/User.h"
+#include "../model/user.h"
 #include <libpq-fe.h>
 
 class UserRepository
